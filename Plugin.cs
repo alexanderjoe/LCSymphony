@@ -23,7 +23,7 @@ namespace LCSymphony
             }
 
             _harmony.PatchAll(typeof(PreInitSceneScriptPatch));
-            
+
             Logger.LogInfo($"Plugin {ModName}-{ModVersion} loaded!");
         }
 
