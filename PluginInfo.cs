@@ -4,6 +4,6 @@
     {
         public const string PLUGIN_GUID = "dev.alexanderdiaz.lcsymphony";
         public const string PLUGIN_NAME = "LC Symphony";
-        public const string PLUGIN_VERSION = "1.0.1";
+        public const string PLUGIN_VERSION = "1.1.0";
     }
 }

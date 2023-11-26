@@ -2,7 +2,13 @@
 
 namespace LCSymphony.Patches
 {
-    internal class PreInitSceneScriptPatch
+    /*
+     * This mod has been done a few times, but this is my edition.
+     * I try to be safe and not forcibly skip the screens.
+     * From my testing it seemed to break functionality
+     * sometimes when I forcibly skipped the screens.
+     */
+    internal class SkipToStartPatch
     {
         [HarmonyPatch(typeof(PreInitSceneScript), "Start")]
         [HarmonyPostfix]
