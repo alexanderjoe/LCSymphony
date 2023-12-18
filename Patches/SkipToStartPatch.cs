@@ -12,20 +12,36 @@ namespace LCSymphony.Patches
     {
         [HarmonyPatch(typeof(PreInitSceneScript), "Start")]
         [HarmonyPostfix]
-        private static void chooseOnlineDefaultPatch(ref PreInitSceneScript __instance)
+        private static void SetLaunchModePatch(ref PreInitSceneScript __instance)
         {
-            Plugin.Log("Skipping online mode selection.");
+            Plugin.Log("Setting chosen quick-launch option.");
 
-            __instance.ChooseLaunchOption(true);
+            switch (ConfigSettings.LaunchOption.Value)
+            {
+                case "online":
+                    Plugin.Log("Launching into online mode.");
+                    __instance.ChooseLaunchOption(true);
+                    break;
+                case "lan":
+                    Plugin.Log("Launching into LAN mode.");
+                    __instance.ChooseLaunchOption(false);
+                    break;
+                case "normal":
+                    Plugin.Log("Allowing user choice of launch mode.");
+                    break;
+            }
         }
 
         [HarmonyPatch(typeof(InitializeGame), "Awake")]
         [HarmonyPostfix]
-        private static void Test(ref InitializeGame __instance)
+        private static void SkipTerminalBootPatch(ref InitializeGame __instance)
         {
             Plugin.Log("Skipping boot-up screen.");
 
-            __instance.runBootUpScreen = false;
+            if (ConfigSettings.SkipTerminalBoot.Value)
+            {
+                __instance.runBootUpScreen = false;
+            }
         }
     }
 }

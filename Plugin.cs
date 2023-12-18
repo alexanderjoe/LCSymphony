@@ -29,9 +29,10 @@ namespace LCSymphony
 
             _harmony.PatchAll(typeof(SkipToStartPatch));
 
-            if (ConfigSettings.PingEnabled.Value)
+            if (ConfigSettings.PingEnabled.Value && ConfigSettings.LaunchOption.Value != "lan")
+            {
                 _harmony.PatchAll(typeof(HudManagerPatch));
-
+            }
 
             InitPingManager();
 
