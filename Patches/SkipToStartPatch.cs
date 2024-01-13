@@ -1,4 +1,5 @@
 ﻿using HarmonyLib;
+using UnityEngine.SceneManagement;
 
 namespace LCSymphony.Patches
 {
@@ -10,26 +11,32 @@ namespace LCSymphony.Patches
      */
     internal class SkipToStartPatch
     {
-        [HarmonyPatch(typeof(PreInitSceneScript), "Start")]
+        [HarmonyPatch(typeof(PreInitSceneScript), "SkipToFinalSetting")]
         [HarmonyPostfix]
-        private static void SetLaunchModePatch(ref PreInitSceneScript __instance)
+        internal static void SetLaunchModePatch(PreInitSceneScript __instance, ref bool ___choseLaunchOption)
         {
+            if (ConfigSettings.LaunchOption.Value == "normal")
+            {
+                return;
+            }
+
             Plugin.Log("Setting chosen quick-launch option.");
 
-            switch (ConfigSettings.LaunchOption.Value)
+            foreach (var panel in __instance.LaunchSettingsPanels)
             {
-                case "online":
-                    Plugin.Log("Launching into online mode.");
-                    __instance.ChooseLaunchOption(true);
-                    break;
-                case "lan":
-                    Plugin.Log("Launching into LAN mode.");
-                    __instance.ChooseLaunchOption(false);
-                    break;
-                case "normal":
-                    Plugin.Log("Allowing user choice of launch mode.");
-                    break;
+                panel.gameObject.SetActive(false);
             }
+
+            __instance.currentLaunchSettingPanel = 0;
+            __instance.headerText.text = "";
+            __instance.continueButton.gameObject.SetActive(false);
+            ___choseLaunchOption = true;
+
+            var launchMode = ConfigSettings.LaunchOption.Value == "online";
+
+            Plugin.Log($"Launching into {ConfigSettings.LaunchOption.Value} mode.");
+
+            SceneManager.LoadScene(launchMode ? "InitScene" : "InitSceneLANMode");
         }
 
         [HarmonyPatch(typeof(InitializeGame), "Awake")]

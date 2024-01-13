@@ -23,20 +23,22 @@ namespace LCSymphony
 
         private IEnumerator UpdatePingData()
         {
+            while (StartOfRound.Instance == null)
+            {
+                yield return new WaitForSeconds(3f);
+            }
+
             while (true)
             {
-                yield return new WaitForSeconds(0.5f);
-
-                if (GameNetworkManager.Instance.currentLobby != null ||
-                    !SteamNetworkingUtils.LocalPingLocation.HasValue)
+                if (SteamNetworkingUtils.LocalPingLocation != null && SteamNetworkingUtils.LocalPingLocation.HasValue)
                 {
-                    if (SteamNetworkingUtils.LocalPingLocation != null)
-                        Ping = SteamNetworkingUtils.EstimatePingTo(SteamNetworkingUtils.LocalPingLocation.Value);
+                    Ping = SteamNetworkingUtils.EstimatePingTo(SteamNetworkingUtils.LocalPingLocation.Value);
+                    yield return new WaitForSeconds(0.5f);
                 }
                 else
                 {
-                    Plugin.Log($"Could not update ping data. Retrying in 5 seconds.");
-                    yield return new WaitForSeconds(5f);
+                    Plugin.Log($"Could not update ping data. Retrying in 10 seconds.");
+                    yield return new WaitForSeconds(10f);
                 }
             }
         }
